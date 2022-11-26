@@ -5,15 +5,13 @@ if (!validate()) {
     exit('Поля не заполнены');
 }
 
-
 $query = "INSERT INTO users VALUES(NULL,:firstName,:secondName,:email,:password,:passwordCheck)";
 $data = getPostData();
 // Если всё ок со вставкой то редирект
 if (insert($query, $data)) {
     header("Location:welcome.html");
 } else {
-    // тут лучше всего ошибку как-то выводить
-    exit('Error while inserting data to database');
+    exit('Error while inserting data to database'); //Ошибка вставки
 }
 
 // Получаем отдельно данные из запроса
@@ -33,12 +31,11 @@ function insert(string $query, array $fields): bool
 {
     $database = connectDatabase();
 
-    // Ошибка в запросе - отдельный лог
     try {
         $msg = $database->prepare($query);
         $msg->execute($fields);
     } catch (PDOException $e) {
-        echo "Error query. " . $e->getMessage();
+        echo "Error query. " . $e->getMessage();  // Ошибка в запросе
         return false;
     }
 
@@ -48,11 +45,10 @@ function insert(string $query, array $fields): bool
 // Получаем отдельно подключение к базе
 function connectDatabase(): PDO
 {
-    // Если ошибка в подключении - отдельный лог
     try {
         $connectionDatabase = new PDO("mysql:host=localhost;dbname=test", 'root', '');
     } catch (PDOException $e) {
-        echo "Error connecting to Database. " . $e->getMessage();
+        echo "Error connecting to Database. " . $e->getMessage(); // Ошибка в подключении - отдельный лог
         return new PDO();
     }
 
